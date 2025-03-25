@@ -1,20 +1,20 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config(); // Load environment variables
+require("dotenv").config(); 
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // Use TLS
+  secure: false, 
   auth: {
-    user: process.env.EMAIL_USER, // Use correct environment variable name
-    pass: process.env.EMAIL_PASS, // Use correct environment variable name
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS, 
   },
 });
 
 const sendEmail = async (to, subject, htmlContent) => {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_PASS,
+      from: process.env.EMAIL_USER,
       to,
       subject,
       html: htmlContent,
@@ -22,6 +22,7 @@ const sendEmail = async (to, subject, htmlContent) => {
 
     const info = await transporter.sendMail(mailOptions);
     console.log("Email sent:", info.response);
+    console.log("MailInfo:", info);
   } catch (error) {
     console.error("Error sending email:", error);
   }

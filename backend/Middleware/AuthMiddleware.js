@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const secretkey = ' NBKFFJBFDKDJLNBJKFVJGFKVK'
-const userData=require('../Model/UserModel')
+const userData=require('../Model/User')
 
 exports.auth = async(req,res,next) =>{
 

@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../Helper/sendEmail");
 
 const secretkey = ' NBKFFJBFDKDJLNBJhjbjjjjGFKVK'
+const moment=require('moment')
 
 exports.signup = async (req, res) => {
   try {
@@ -64,6 +65,9 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
+    console.log("User",user)
+    const role=user.role
+    console.log("Role",role)
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -80,7 +84,7 @@ exports.login = async (req, res) => {
 
     // Define redirect path based on role
     let redirectPath = "/dashboard"; // Default path
-    if (user.role === "user") redirectPath = "/user-dashboard";
+    if (user.role === "user") redirectPath = "/UserView";
     else if (user.role === "supplier") redirectPath = "/supplier-dashboard";
     else if (user.role === "admin") redirectPath = "/admin-dashboard";
 
@@ -162,6 +166,37 @@ exports.forgetPassword = async (req, res) => {
 
     res.status(200).json({ message: "Password reset successful" });
   } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+exports.updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+   
+    const user = await User.findOne({ email: req.user.email }); // Fetch user by email
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Compare current password with stored hash
+    const validPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: "Invalid current password" });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update user password
+    await User.updateOne({ email: user.email }, { password: hashedPassword });
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Update Password Error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

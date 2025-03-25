@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "supplier", "admin"],
       default: "user",
     },
+    supplier_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'supplier',
+      required: false
+  },
     otp: {
       type: String,
       required: false

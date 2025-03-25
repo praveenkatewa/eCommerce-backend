@@ -5,6 +5,8 @@ const cors=require('cors');
 
 const router=require('./Router/UserRouter');
 
+const supplierRouter = require('./Router/SupplierRouter')
+
 require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -20,6 +22,8 @@ mongoose.connect(mongoUrl).then(()=>{
   console.log('error:',err);
 });
 app.use('/ecom',router);
+
+app.use('/supplier',supplierRouter)
 
 app.listen(PORT,()=>{
     console.log(`server is running on port ${PORT}`);
